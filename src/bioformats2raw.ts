@@ -1167,7 +1167,7 @@ const experimentTypeSchema = baseTypeSchema.extend({
 const imageTypeSchema = baseTypeSchema.extend({
   ID: z.string(),
   Name: z.union([z.string(), z.number()]).optional(),
-  AcquisitionDate: z.date().optional(),
+  AcquisitionDate: z.coerce.date().optional(),
   AnnotationRef: z.array(annotationRefTypeSchema).optional(),
   Description: z.string().optional(),
   ExperimenterGroupRef: experimenterGroupRefTypeSchema.optional(),
