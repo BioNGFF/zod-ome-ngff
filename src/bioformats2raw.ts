@@ -543,8 +543,8 @@ const annotationSchema = baseTypeSchema.extend({
 });
 
 export const lsidSchema = z.string();
-const mapMTypeSchema = z.object({
-  K: z.string().pipe(z.coerce.number()),
+export const mapMTypeSchema = z.object({
+  K: z.coerce.string(),
 });
 
 const mapSchema = baseTypeSchema.extend({
