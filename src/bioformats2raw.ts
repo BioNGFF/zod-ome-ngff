@@ -543,9 +543,8 @@ const annotationSchema = baseTypeSchema.extend({
 });
 
 export const lsidSchema = z.string();
-
 const mapMTypeSchema = z.object({
-  K: z.string(),
+  K: z.string().pipe(z.coerce.number()),
 });
 
 const mapSchema = baseTypeSchema.extend({
@@ -831,9 +830,10 @@ const termAnnotationTypeSchema = basicAnnotationSchema.extend({
   Value: z.string(),
 });
 
-const timestampAnnotationTypeSchema = basicAnnotationSchema.extend({
+export const timestampAnnotationTypeSchema = basicAnnotationSchema.extend({
   Value: z.string().pipe(z.coerce.date()),
 });
+
 
 const textAnnotationSchema = annotationSchema;
 
