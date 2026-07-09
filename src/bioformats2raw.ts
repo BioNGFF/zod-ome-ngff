@@ -753,11 +753,11 @@ const wellSampleRefTypeSchema = referenceSchema.extend({
 export const plateIDSchema = z.string();
 
 const plateAcquisitionTypeSchema = baseTypeSchema.extend({
-  EndTime: z.date().optional(),
+  EndTime: z.string().pipe(z.coerce.date()).optional(),
   ID: z.string(),
   MaximumFieldCount: z.number().optional(),
   Name: z.string().optional(),
-  StartTime: z.date().optional(),
+  StartTime: z.string().pipe(z.coerce.date()).optional(),
   AnnotationRef: z.array(annotationRefTypeSchema).optional(),
   Description: z.string().optional(),
   WellSampleRef: z.array(wellSampleRefTypeSchema).optional(),
@@ -832,7 +832,7 @@ const termAnnotationTypeSchema = basicAnnotationSchema.extend({
 });
 
 const timestampAnnotationTypeSchema = basicAnnotationSchema.extend({
-  Value: z.date(),
+  Value: z.string().pipe(z.coerce.date()),
 });
 
 const textAnnotationSchema = annotationSchema;
@@ -858,7 +858,7 @@ const wellSampleTypeSchema = baseTypeSchema.extend({
   PositionXUnit: unitsLengthSchema.optional(),
   PositionY: z.number().optional(),
   PositionYUnit: unitsLengthSchema.optional(),
-  Timepoint: z.date().optional(),
+  Timepoint: z.string().pipe(z.coerce.date()).optional(),
   ImageRef: imageRefTypeSchema.optional(),
 });
 
@@ -1167,7 +1167,7 @@ const experimentTypeSchema = baseTypeSchema.extend({
 const imageTypeSchema = baseTypeSchema.extend({
   ID: z.string(),
   Name: z.union([z.string(), z.number()]).optional(),
-  AcquisitionDate: z.coerce.date().optional(),
+  AcquisitionDate: z.string().pipe(z.coerce.date()).optional(),
   AnnotationRef: z.array(annotationRefTypeSchema).optional(),
   Description: z.string().optional(),
   ExperimenterGroupRef: experimenterGroupRefTypeSchema.optional(),
