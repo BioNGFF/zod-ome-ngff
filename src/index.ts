@@ -5,3 +5,4 @@ export * as v04 from "./0.4.js";
 export * as v05 from "./0.5.js";
 export * as v06 from "./0.6.js";
 export * as latest from "./latest.js";
+export { bioformats2rawOMEXMLSchema } from "./bioformats2raw.js"

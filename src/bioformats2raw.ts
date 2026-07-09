@@ -1251,6 +1251,6 @@ const OMETypeSchema = baseTypeSchema.extend({
   StructuredAnnotations: structuredAnnotationsTypeSchema.optional(),
 });
 
-export const bioformat2rawOMEXMLSchema = baseTypeSchema.extend({
+export const bioformats2rawOMEXMLSchema = baseTypeSchema.extend({
   OME: OMETypeSchema,
 });
