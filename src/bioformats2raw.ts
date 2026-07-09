@@ -1207,7 +1207,7 @@ const structuredAnnotationsTypeSchema = baseTypeSchema.extend({
   TagAnnotation: z.array(tagAnnotationTypeSchema).optional(),
   TermAnnotation: z.array(termAnnotationTypeSchema).optional(),
   TimestampAnnotation: z.array(timestampAnnotationTypeSchema).optional(),
-  XMLAnnotation: xMLAnnotationTypeSchema.optional(),
+  XMLAnnotation: z.array(xMLAnnotationTypeSchema).optional(),
 });
 
 const shapeGroupProxyTypeSchema = baseTypeSchema.extend({
