@@ -152,6 +152,7 @@ export const Bf2RawSchema = z
     "bioformats2raw.layout": z
       .literal(3)
       .describe("The top-level identifier metadata added by bioformats2raw"),
+    "plate": PlateSchema.optional()
   })
   .describe("JSON from OME-NGFF .zattrs");
 

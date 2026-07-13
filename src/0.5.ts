@@ -165,6 +165,7 @@ export const Bf2RawSchema = withVersion(z.object({
     .describe(
       "The top-level identifier metadata added by bioformats2raw"
     ),
+  "plate": PlateSchema.optional()
 }).shape);
 
 // OME
