@@ -1251,7 +1251,7 @@ const OMETypeSchema = baseTypeSchema.extend({
   StructuredAnnotations: structuredAnnotationsTypeSchema.optional(),
 });
 
-export const OMEZattrsSchema = z.object({
+export const bioformats2rawOMEZattrsSchema = z.object({
   path: z.string(),
   highlight: z.string()
 })
