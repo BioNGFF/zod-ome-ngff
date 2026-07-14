@@ -1252,11 +1252,7 @@ const OMETypeSchema = baseTypeSchema.extend({
 });
 
 export const bioformats2rawOMEZattrsSchema = z.object({
-  series: z.object({
-    path: z.string().optional(),
-    highlight: z.string().optional()
-
-  }).optional()
+  series: z.array(z.string()).optional()
 })
 
 export const bioformats2rawOMEXMLSchema = baseTypeSchema.extend({
