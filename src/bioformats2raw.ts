@@ -1167,9 +1167,11 @@ const experimentTypeSchema = baseTypeSchema.extend({
 const imageTypeSchema = baseTypeSchema.extend({
   ID: z.string(),
   Name: z.union([z.string(), z.number()]).optional(),
-  AcquisitionDate: z.string().pipe(z.coerce.date()).optional(),
+  AcquisitionDate: z.object({
+    '_text': z.string().pipe(z.coerce.date()).optional()
+  }).optional(),
   AnnotationRef: z.array(annotationRefTypeSchema).optional(),
-  Description: z.string().optional(),
+  Description: z.object({ '_text': z.string().optional() }).optional(),
   ExperimenterGroupRef: experimenterGroupRefTypeSchema.optional(),
   ExperimenterRef: experimenterRefTypeSchema.optional(),
   ExperimentRef: experimentRefTypeSchema.optional(),
@@ -1241,7 +1243,7 @@ const OMETypeSchema = baseTypeSchema.extend({
   Experimenter: z.array(experimenterTypeSchema).optional(),
   ExperimenterGroup: z.array(experimenterGroupTypeSchema).optional(),
   Folder: z.array(folderTypeSchema).optional(),
-  Image: z.array(imageTypeSchema).optional(),
+  Image: z.array(imageTypeSchema),
   Instrument: z.array(instrumentTypeSchema).optional(),
   Plate: z.array(plateTypeSchema).optional(),
   Project: z.array(projectTypeSchema).optional(),
