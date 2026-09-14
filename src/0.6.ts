@@ -397,47 +397,53 @@ const AxesSchema = z.object({
   type: z.string()
 })
 
+
+
+
+
 const TransformationSchema = z.union([
   z.object({
+    input: z.object({ path: z.string(), name: z.string() }),
+    output: z.object({ name: z.string() }),
     type: z.enum(["sequence"]),
     transformations: z.any(),
 
   }),
   z.object({ type: z.enum(["identity"]) }),
   z.object({
+    input: z.object({ path: z.string(), name: z.string() }),
+    output: z.object({ name: z.string() }),
     type: z.enum(["scale"]),
     scale: z.array(z.number()),
   }),
   z.object({
+    input: z.object({ path: z.string(), name: z.string() }),
+    output: z.object({ name: z.string() }),
     type: z.enum(["translation"]),
     translation: z.array(z.number()),
   }),
 
   z.object({
+    input: z.object({ path: z.string(), name: z.string() }),
+    output: z.object({ name: z.string() }),
     type: z.enum(["rotation"]),
     rotation: z.array(z.number())
   }),
   z.object({
+    input: z.object({ path: z.string(), name: z.string() }),
+    output: z.object({ name: z.string() }),
     type: z.enum(["affine"]),
     affine: z.array(z.array(z.number()))
   })
 
 ]);
 
-const CoordinateTransformationSchema = z.object({
-  input: z.object({ path: z.string(), name: z.string() }),
-  output: z.object({ name: z.string() }),
-  type: z.string(),
-  transformations: z.array(TransformationSchema)
-})
-
-
 const CoordinateSystemSchema = z.object({
   name: z.string(),
   axes: z.array(AxesSchema)
 })
 const Scene = z.object({
-  coordinateTransformations: z.array(CoordinateTransformationSchema),
+  coordinateTransformations: z.array(TransformationSchema),
   coordinateSystems: z.array(CoordinateSystemSchema).optional()
 })
 
