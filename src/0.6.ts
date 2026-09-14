@@ -397,41 +397,44 @@ const AxesSchema = z.object({
   type: z.string()
 })
 
-
-
-
+const TransformationInputSchema = z.object({
+  path: z.string().optional(), name: z.string().optional(),
+})
+const TransformationOutputSchema = z.object({
+  path: z.string().optional(), name: z.string().optional(),
+})
 
 const TransformationSchema = z.union([
   z.object({
-    input: z.object({ path: z.string(), name: z.string() }),
-    output: z.object({ name: z.string() }),
+    input: TransformationInputSchema,
+    output: TransformationOutputSchema,
     type: z.enum(["sequence"]),
     transformations: z.any(),
 
   }),
   z.object({ type: z.enum(["identity"]) }),
   z.object({
-    input: z.object({ path: z.string(), name: z.string() }),
-    output: z.object({ name: z.string() }),
+    input: TransformationInputSchema,
+    output: TransformationOutputSchema,
     type: z.enum(["scale"]),
     scale: z.array(z.number()),
   }),
   z.object({
-    input: z.object({ path: z.string(), name: z.string() }),
-    output: z.object({ name: z.string() }),
+    input: TransformationInputSchema,
+    output: TransformationOutputSchema,
     type: z.enum(["translation"]),
     translation: z.array(z.number()),
   }),
 
   z.object({
-    input: z.object({ path: z.string(), name: z.string() }),
-    output: z.object({ name: z.string() }),
+    input: TransformationInputSchema,
+    output: TransformationOutputSchema,
     type: z.enum(["rotation"]),
     rotation: z.array(z.number())
   }),
   z.object({
-    input: z.object({ path: z.string(), name: z.string() }),
-    output: z.object({ name: z.string() }),
+    input: TransformationInputSchema,
+    output: TransformationOutputSchema,
     type: z.enum(["affine"]),
     affine: z.array(z.array(z.number()))
   })
