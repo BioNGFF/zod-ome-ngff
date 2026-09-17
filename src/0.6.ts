@@ -355,11 +355,13 @@ const ImageLabelSchema = StrictImageLabelSchema.partial({
 });
 
 export const LabelSchema = withVersion(z.object({
-  "image-label": ImageLabelSchema
+  "image-label": ImageLabelSchema,
+  "multiscales": z.array(Multiscale)
 }).shape);
 
 export const StrictLabelSchema = withVersion(z.object({
-  "image-label": StrictImageLabelSchema
+  "image-label": StrictImageLabelSchema,
+  "multiscales": z.array(Multiscale)
 }).shape);
 
 // Well

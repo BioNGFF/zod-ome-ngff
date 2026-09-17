@@ -349,11 +349,11 @@ const ImageLabelSchema = StrictImageLabelSchema.partial({
 });
 
 export const LabelSchema = z
-  .object({ "image-label": ImageLabelSchema })
+  .object({ "image-label": ImageLabelSchema, "multiscales": z.array(Multiscale) })
   .describe("JSON from OME-NGFF .zattrs");
 
 export const StrictLabelSchema = z
-  .object({ "image-label": StrictImageLabelSchema })
+  .object({ "image-label": StrictImageLabelSchema, "multiscales": z.array(Multiscale) })
   .describe("JSON from OME-NGFF .zattrs");
 
 // Well
