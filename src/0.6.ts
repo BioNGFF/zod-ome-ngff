@@ -265,7 +265,7 @@ const CoordinateTransformationSchema = z.object({
   input: z.object({ path: z.string(), name: z.string() }),
   output: z.object({ name: z.string() }),
   type: z.string(),
-  transformations: z.array(TransformationSchema)
+  transformations: z.array(z.any())
 })
 
 
