@@ -3,7 +3,7 @@ import { z } from "zod";
 import { to_date } from "./shared.js";
 
 export const VersionSchema = z
-  .enum(["0.5"])
+  .enum(["0.6dev3", "0.6"])
   .describe("The version of the OME-Zarr Metadata");
 
 
