@@ -308,7 +308,7 @@ const StrictMultiscale = z.object({
     )
     .min(1),
   coordinateSystems: z.array(CoordinateSystemSchema).optional(),
-  coordinateTransformations: z.array(CoordinateTransformationSchema)
+  coordinateTransformations: z.array(CoordinateTransformationSchema).optional()
 });
 
 const Multiscale = StrictMultiscale.partial({
