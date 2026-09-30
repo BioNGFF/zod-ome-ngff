@@ -252,7 +252,7 @@ const TransformationSchema = z.union([
 
   z.object({
     type: z.enum(["rotation"]),
-    rotation: z.array(z.number())
+    rotation: z.array(z.array(z.number()))
   }),
   z.object({
     type: z.enum(["affine"]),
