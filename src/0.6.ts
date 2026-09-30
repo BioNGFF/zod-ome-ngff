@@ -228,6 +228,18 @@ const CoordinateTransformation = z.union([
     type: z.enum(["translation"]),
     translation: z.array(z.number()).min(2),
   }),
+  z.object({
+    type: z.enum(["affine"]),
+    affine: z.array(z.array(z.number()))
+  }),
+  z.object({
+    type: z.enum(["rotation"]),
+    rotation: z.array(z.array(z.number()))
+  }),
+  z.object({
+    type: z.enum(["sequence"]),
+    transformations: z.array(z.any())
+  })
 ]);
 
 const CoordinateTransformations = z.array(CoordinateTransformation)
