@@ -303,7 +303,7 @@ const StrictMultiscale = z.object({
     .array(
       z.object({
         path: z.string(),
-        coordinateTransformations: CoordinateTransformations,
+        coordinateTransformations: z.array(CoordinateTransformationSchema),
       }),
     )
     .min(1),
