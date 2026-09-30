@@ -229,7 +229,50 @@ const CoordinateTransformation = z.union([
     translation: z.array(z.number()).min(2),
   }),
 ]);
+const AxesSchema = z.object({
+  name: z.string(),
+  type: z.string()
+})
 
+const TransformationSchema = z.union([
+  z.object({
+    type: z.enum(["sequence"]),
+    transformations: z.any(),
+
+  }),
+  z.object({ type: z.enum(["identity"]) }),
+  z.object({
+    type: z.enum(["scale"]),
+    scale: z.array(z.number()),
+  }),
+  z.object({
+    type: z.enum(["translation"]),
+    translation: z.array(z.number()),
+  }),
+
+  z.object({
+    type: z.enum(["rotation"]),
+    rotation: z.array(z.number())
+  }),
+  z.object({
+    type: z.enum(["affine"]),
+    affine: z.array(z.array(z.number()))
+  })
+
+]);
+
+const CoordinateTransformationSchema = z.object({
+  input: z.object({ path: z.string(), name: z.string() }),
+  output: z.object({ name: z.string() }),
+  type: z.string(),
+  transformations: z.array(TransformationSchema)
+})
+
+
+const CoordinateSystemSchema = z.object({
+  name: z.string(),
+  axes: z.array(AxesSchema)
+})
 const CoordinateTransformations = z.array(CoordinateTransformation)
   .min(1)
   .superRefine((ts, ctx) => {
@@ -264,8 +307,8 @@ const StrictMultiscale = z.object({
       }),
     )
     .min(1),
-  axes: Axes,
-  coordinateTransformations: CoordinateTransformations.optional(),
+  coordinateSystems: z.array(CoordinateSystemSchema).optional(),
+  coordinateTransformations: z.array(CoordinateTransformationSchema)
 });
 
 const Multiscale = StrictMultiscale.partial({
@@ -394,50 +437,7 @@ const StrictInnerWellSchema = z.object({
     }),
 });
 
-const AxesSchema = z.object({
-  name: z.string(),
-  type: z.string()
-})
 
-const TransformationSchema = z.union([
-  z.object({
-    type: z.enum(["sequence"]),
-    transformations: z.any(),
-
-  }),
-  z.object({ type: z.enum(["identity"]) }),
-  z.object({
-    type: z.enum(["scale"]),
-    scale: z.array(z.number()),
-  }),
-  z.object({
-    type: z.enum(["translation"]),
-    translation: z.array(z.number()),
-  }),
-
-  z.object({
-    type: z.enum(["rotation"]),
-    rotation: z.array(z.number())
-  }),
-  z.object({
-    type: z.enum(["affine"]),
-    affine: z.array(z.array(z.number()))
-  })
-
-]);
-
-const CoordinateTransformationSchema = z.object({
-  input: z.object({ path: z.string(), name: z.string() }),
-  output: z.object({ name: z.string() }),
-  type: z.string(),
-  transformations: z.array(TransformationSchema)
-})
-
-
-const CoordinateSystemSchema = z.object({
-  name: z.string(),
-  axes: z.array(AxesSchema)
-})
 const Scene = z.object({
   coordinateTransformations: z.array(CoordinateTransformationSchema),
   coordinateSystems: z.array(CoordinateSystemSchema).optional()
