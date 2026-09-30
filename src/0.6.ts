@@ -262,8 +262,8 @@ const TransformationSchema = z.union([
 ]);
 
 const CoordinateTransformationSchema = z.object({
-  input: z.object({ path: z.string(), name: z.string() }),
-  output: z.object({ name: z.string() }),
+  input: z.union([z.object({ path: z.string(), name: z.string() }), z.string()]),
+  output: z.union([z.object({ name: z.string() }), z.string()]),
   type: z.string(),
   transformations: z.array(z.any())
 })
