@@ -236,26 +236,26 @@ const AxesSchema = z.object({
 
 const TransformationSchema = z.union([
   z.object({
-    type: z.enum(["sequence"]),
+    type: z.literal("sequence"),
     transformations: z.any(),
 
   }),
-  z.object({ type: z.enum(["identity"]) }),
+  z.object({ type: z.literal('identity') }),
   z.object({
-    type: z.enum(["scale"]),
+    type: z.literal('scale'),
     scale: z.array(z.number()),
   }),
   z.object({
-    type: z.enum(["translation"]),
+    type: z.literal('translation'),
     translation: z.array(z.number()),
   }),
 
   z.object({
-    type: z.enum(["rotation"]),
+    type: z.literal('rotation'),
     rotation: z.array(z.array(z.number()))
   }),
   z.object({
-    type: z.enum(["affine"]),
+    type: z.literal('affine'),
     affine: z.array(z.array(z.number()))
   })
 
