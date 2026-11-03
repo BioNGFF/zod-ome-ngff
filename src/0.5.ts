@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { to_date } from "./shared.js";
+import { Orientation, to_date } from "./shared.js";
 
 export const VersionSchema = z
   .enum(["0.5"])
@@ -184,6 +184,10 @@ const Axis = z.object({
   name: z.string(),
   type: z.string().default("space"),
   unit: z.string().optional(),
+  // RFC-4. Nullish rather than optional because the RFC says an absent field and an
+  // explicit null mean the same thing, while its own JSON Schema would reject the
+  // null; a reader should accept both and let a writer worry about which to emit.
+  orientation: Orientation.nullish(),
 });
 
 const Axes = z.array(Axis)
