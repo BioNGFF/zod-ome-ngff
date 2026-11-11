@@ -181,121 +181,148 @@ export const OmeSchema = withVersion(z.object({
 
 // Image
 
-const Axis = z.object({
-  name: z.string(),
-  type: z.string().default("space"),
-  unit: z.string().optional(),
-});
-
-const Axes = z.array(Axis)
-  .min(2)
-  .superRefine((axes, ctx) => {
-    let names = axes.map((ax) => ax.name);
-    if (axes.length !== new Set(names).size) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: `No duplicate axes allowed.`,
-      });
-    }
-    if (axes.length > 5) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: `Too many axes.`,
-      });
-    }
-    let total_space_axes = axes.filter((ax) => ax.type === "space").length;
-    if (total_space_axes <= 1) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Missing space axes.",
-      });
-    }
-    if (total_space_axes > 3) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Too many space axes.",
-      });
-    }
-  });
-
-const CoordinateTransformation = z.union([
-  z.object({ type: z.enum(["identity"]) }),
-  z.object({
-    type: z.enum(["scale"]),
-    scale: z.array(z.number()).min(2),
-  }),
-  z.object({
-    type: z.enum(["translation"]),
-    translation: z.array(z.number()).min(2),
-  }),
-]);
 const AxesSchema = z.object({
   name: z.string(),
-  type: z.string()
-})
+  type: z.string().optional(),
+  unit: z.string().optional(),
+  discrete: z.boolean().optional(),
+  longName: z.string().optional(),
+});
 
-const TransformationSchema = z.union([
-  z.object({
-    type: z.literal("sequence"),
-    transformations: z.any(),
+const TransformationRef = z.object({
+  name: z.string().optional(),
+  path: z.string().nullable().optional(),
+});
 
-  }),
-  z.object({ type: z.literal('identity') }),
+const TransformationEndpoints = z.object({
+  input: TransformationRef.optional(),
+  output: TransformationRef.optional(),
+});
+
+const TransformationFields = {
+  ...TransformationEndpoints.shape,
+  name: z.string().optional(),
+};
+
+const IdentityTransformationSchema = z.object({
+  ...TransformationFields,
+  type: z.literal("identity"),
+});
+
+const ScaleTransformationSchema = z.union([
   z.object({
-    type: z.literal('scale'),
+    ...TransformationFields,
+    type: z.literal("scale"),
     scale: z.array(z.number()),
   }),
   z.object({
-    type: z.literal('translation'),
-    translation: z.array(z.number()),
+    ...TransformationFields,
+    type: z.literal("scale"),
+    path: z.string(),
   }),
-
-  z.object({
-    type: z.literal('rotation'),
-    rotation: z.array(z.array(z.number()))
-  }),
-  z.object({
-    type: z.literal('affine'),
-    affine: z.array(z.array(z.number()))
-  })
-
 ]);
 
-const CoordinateTransformationSchema = z.object({
-  input: z.union([z.object({ path: z.string(), name: z.string() }), z.string()]),
-  output: z.union([z.object({ name: z.string() }), z.string()]),
-  type: z.string(),
-  transformations: z.array(z.any())
-})
+const TranslationTransformationSchema = z.union([
+  z.object({
+    ...TransformationFields,
+    type: z.literal("translation"),
+    translation: z.array(z.number()),
+  }),
+  z.object({
+    ...TransformationFields,
+    type: z.literal("translation"),
+    path: z.string(),
+  }),
+]);
 
+const RotationTransformationSchema = z.union([
+  z.object({
+    ...TransformationFields,
+    type: z.literal("rotation"),
+    rotation: z.array(z.array(z.number())),
+  }),
+  z.object({
+    ...TransformationFields,
+    type: z.literal("rotation"),
+    path: z.string(),
+  }),
+]);
+
+const AffineTransformationSchema = z.union([
+  z.object({
+    ...TransformationFields,
+    type: z.literal("affine"),
+    affine: z.array(z.array(z.number())),
+  }),
+  z.object({
+    ...TransformationFields,
+    type: z.literal("affine"),
+    path: z.string(),
+  }),
+]);
+
+type Transformation =
+  | z.infer<typeof IdentityTransformationSchema>
+  | z.infer<typeof ScaleTransformationSchema>
+  | z.infer<typeof TranslationTransformationSchema>
+  | z.infer<typeof RotationTransformationSchema>
+  | z.infer<typeof AffineTransformationSchema>
+  | z.infer<typeof TransformationEndpoints> & {
+    name?: string;
+    type: "sequence";
+    transformations: Transformation[];
+  };
+
+const TransformationSchema: z.ZodType<Transformation> = z.lazy(() =>
+  z.union([
+    IdentityTransformationSchema,
+    ScaleTransformationSchema,
+    TranslationTransformationSchema,
+    RotationTransformationSchema,
+    AffineTransformationSchema,
+    z.object({
+      ...TransformationFields,
+      type: z.literal("sequence"),
+      transformations: z.array(TransformationSchema),
+    }),
+  ])
+);
+
+const NamedTransformationRef = TransformationRef.extend({
+  name: z.string(),
+});
+
+const DatasetEndpoints = z.object({
+  input: z.object({ path: z.string() }).strict(),
+  output: z.object({ name: z.string() }).strict(),
+});
+
+const MultiscaleEndpoints = z.object({
+  input: NamedTransformationRef,
+  output: NamedTransformationRef,
+});
+
+const SceneEndpoints = z.object({
+  input: NamedTransformationRef,
+  output: NamedTransformationRef,
+});
+
+const DatasetCoordinateTransformationSchema = TransformationSchema.and(
+  DatasetEndpoints
+);
+
+const MultiscaleCoordinateTransformationSchema = TransformationSchema.and(
+  MultiscaleEndpoints
+);
+
+const SceneCoordinateTransformationSchema = TransformationSchema.and(
+  SceneEndpoints
+);
 
 const CoordinateSystemSchema = z.object({
   name: z.string(),
-  axes: z.array(AxesSchema)
-})
-const CoordinateTransformations = z.array(CoordinateTransformation)
-  .min(1)
-  .superRefine((ts, ctx) => {
-    let scales = ts.filter((t): t is { type: "scale"; scale: number[] } =>
-      t.type === "scale"
-    );
-    let unique_scales = new Set(scales.map((s) => s.scale.join(".")));
-    if (scales.length !== unique_scales.size) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: `No duplicate scale transformations allowed.`,
-      });
-    }
-    if (
-      ts.some((t) => t.type === "translation") &&
-      scales.length === 0
-    ) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: `Missing scale for translation.`,
-      });
-    }
-  });
+  axes: z.array(AxesSchema),
+});
 
 const StrictMultiscale = z.object({
   name: z.string(),
@@ -303,12 +330,16 @@ const StrictMultiscale = z.object({
     .array(
       z.object({
         path: z.string(),
-        coordinateTransformations: z.array(CoordinateTransformationSchema),
+        coordinateTransformations: z.array(
+          DatasetCoordinateTransformationSchema
+        ),
       }),
     )
     .min(1),
   coordinateSystems: z.array(CoordinateSystemSchema).optional(),
-  coordinateTransformations: z.array(CoordinateTransformationSchema).optional()
+  coordinateTransformations: z.array(
+    MultiscaleCoordinateTransformationSchema
+  ).optional(),
 });
 
 const Multiscale = StrictMultiscale.partial({
@@ -439,15 +470,11 @@ const StrictInnerWellSchema = z.object({
 
 
 const Scene = z.object({
-  coordinateTransformations: z.array(CoordinateTransformationSchema),
-  coordinateSystems: z.array(CoordinateSystemSchema).optional()
-})
+  coordinateTransformations: z.array(SceneCoordinateTransformationSchema),
+  coordinateSystems: z.array(CoordinateSystemSchema).optional(),
+});
 
-export const SceneSchema = z.object({
-  ome: z.object({
-    scene: Scene
-  })
-})
+export const SceneSchema = withVersion(z.object({ scene: Scene }).shape);
 
 export const WellSchema = withVersion(z.object({
   well: StrictInnerWellSchema.partial({})
